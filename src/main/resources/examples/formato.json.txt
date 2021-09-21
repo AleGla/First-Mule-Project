@@ -1,0 +1,16 @@
+[
+  {
+    ID: 1,
+    nombre: "Pablo",
+    apellido: "Lurgo",
+    email: "pLurgo@mail.com",
+    telefono: "1234-5678"
+  }, 
+  {
+    ID: 2,
+    nombre: "Luciana",
+    apellido: "Luña",
+    email: "LLuña@mail.com",
+    telefono: "1234-5678"
+  }
+]

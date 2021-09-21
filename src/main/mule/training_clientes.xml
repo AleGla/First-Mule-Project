@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9e13cd44-e620-45f6-99c1-f77b7b42a51d" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="efd0fc47-1daf-4833-b48a-e793a814e714" >
+		<db:mssql-connection host="localhost" port="1433" user="sa" password="sa" databaseName="rest" />
+	</db:config>
+	<flow name="training_clientesFlow_GET" doc:id="61bb54e6-b1a3-44fa-9e33-463cee8367a1" >
+		<http:listener doc:name="Listener" doc:id="9e83ac1e-9130-4f9e-8ab5-f7d17590e2be" config-ref="HTTP_Listener_config" path="/cliente" allowedMethods="GET"/>
+		<db:select doc:id="562970f2-dd40-4bf3-8f36-c8f1e1541618" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM clientes]]></db:sql>
+		</db:select>
+	</flow>
+	<flow name="training_clientesFlow_GET_ID" doc:id="49016565-000e-49b3-a5dc-94c5bba4a7b6" >
+		<http:listener doc:name="Listener" doc:id="1c8adca0-cea9-4285-8505-08fe3a9db73d" config-ref="HTTP_Listener_config" path="/cliente/{id}" allowedMethods="GET"/>
+		<db:select doc:name="Select" doc:id="0e1f6a32-1e3e-4813-a9c8-82fd03eefc0f" config-ref="Database_Config" >
+			<db:sql ><![CDATA[SELECT * FROM clientes WHERE id_cliente = :id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'id':attributes.uriParams.id}]]]></db:input-parameters>
+		</db:select>
+	</flow>
+	<flow name="training_clientesFlow_DELETE" doc:id="935450a6-858f-4c09-9f13-1bbd91e53a17" >
+		<http:listener doc:name="Listener" doc:id="17563f26-251b-4ceb-a48d-df566aad911a" config-ref="HTTP_Listener_config" path="/cliente/{id}" allowedMethods="DELETE"/>
+		<db:delete doc:name="Delete" doc:id="a84b1d0a-c4bf-4d6b-b626-4d160effb8a0" config-ref="Database_Config">
+			<db:sql ><![CDATA[DELETE FROM clientes WHERE id_cliente = :id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'id':attributes.uriParams.id}]]]></db:input-parameters>
+		</db:delete>
+	</flow>
+	<flow name="training_clientesFlow_POST" doc:id="03bd814c-3741-45af-814a-e89cda509c30" >
+		<http:listener doc:name="Listener" doc:id="6ca42d7b-8049-4ac4-91f7-2dc822a2be82" config-ref="HTTP_Listener_config" path="/cliente" allowedMethods="POST"/>
+		<db:insert doc:name="Insert" doc:id="2a9052f2-6e3e-4a37-af17-a41d737edd3a" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO clientes (nombre,apellido,email,telefono)
+VALUES(:nombre,:apellido,:email,:telefono)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'nombre': payload.nombre,
+ 'apellido' : payload.apellido,
+ 'email' : payload.email,
+ 'telefono' : payload.telefono	
+}]]]></db:input-parameters>
+		</db:insert>
+	</flow>
+</mule>
